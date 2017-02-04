@@ -12,7 +12,7 @@ On console run the script :
 ```
 python3.5 coursera.py file.xlsx
 ```
-![10](https://cloud.githubusercontent.com/assets/22424468/22617915/1d6088fe-eafa-11e6-9a7f-a5c97aa439ba.JPG)
+![10](https://cloud.githubusercontent.com/assets/22424468/22618075/25e8831a-eafe-11e6-991e-437333234c32.JPG)
 
 # Project Goals
 

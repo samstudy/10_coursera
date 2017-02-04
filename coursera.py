@@ -1,12 +1,9 @@
 import requests
 import argparse
-
 import openpyxl
-import itertools
 from openpyxl import load_workbook
 from bs4 import BeautifulSoup
 import xlsxwriter
-
 
 
 COUNT_OF_COURSE = 20
@@ -18,6 +15,7 @@ def get_args():
     arg = parser.parse_args()
     return arg.save_file_as
 
+
 def get_course_list():
     urls_store = []
     inf_from_url = requests.get('https://www.coursera.org/sitemap~www~courses.xml')
@@ -28,6 +26,7 @@ def get_course_list():
         page_inf = BeautifulSoup(course_url.content, 'lxml')
         urls_store.extend([page_inf])
     return urls_store       
+
 
 def get_course_name_lang_date():
     lang_store = []
@@ -43,6 +42,7 @@ def get_course_name_lang_date():
         lang_store.extend([lng[0].text])
     return name_store, date_store, lang_store,
 
+
 def get_course_rating():
     rating_store = []
     course_rtg = get_course_list()
@@ -53,6 +53,7 @@ def get_course_rating():
         else:
             rating_store.extend(['This course does not have a rating'])
     return rating_store
+
 
 def get_course_duration():
     duration_store = []
@@ -65,21 +66,21 @@ def get_course_duration():
             duration_store.extend(["There is no information about duration"])
     return duration_store
 
+
 def save_cource_inf_as_excell(file_name, course_name, course_date, course_lang, course_rating, course_duration):
     workbook = xlsxwriter.Workbook(file_name)
     cell_format = workbook.add_format({'bold': True, 'italic': True, 'fg_color': '#FFFF00' })
     worksheet = workbook.add_worksheet()
-    worksheet.write('A1', 'Course name',cell_format)
-    worksheet.write('B1', 'Course date',cell_format)
-    worksheet.write('C1', 'Course language',cell_format)
-    worksheet.write('D1', 'Course rating',cell_format)
-    worksheet.write('E1', 'Course duration',cell_format)
+    worksheet.write('A1', 'Course name', cell_format)
+    worksheet.write('B1', 'Course date', cell_format)
+    worksheet.write('C1', 'Course language', cell_format)
+    worksheet.write('D1', 'Course rating', cell_format)
+    worksheet.write('E1', 'Course duration', cell_format)
     worksheet.write_column('A2', course_name)
-    worksheet.write_column('B2', course_date) 
-    worksheet.write_column('C2', course_lang) 
+    worksheet.write_column('B2', course_date)
+    worksheet.write_column('C2', course_lang)
     worksheet.write_column('D2', course_rating)
-    worksheet.write_column('E2',course_duration)
-
+    worksheet.write_column('E2', course_duration)
     workbook.close()
 
 

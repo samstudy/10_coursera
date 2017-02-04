@@ -5,7 +5,7 @@ ____
 ##Requirement
 Need to install usefull modules from **requirement file**, for do it run command:
 ```
-pip install -r requirement.
+pip install -r requirement
 ```
 ### Usage:
 On console run the script :

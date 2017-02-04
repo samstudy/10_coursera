@@ -11,8 +11,9 @@ pip install -r requirement.
 On console run the script :
 ```
 python3.5 coursera.py file.xlsx
-![10](https://cloud.githubusercontent.com/assets/22424468/22617915/1d6088fe-eafa-11e6-9a7f-a5c97aa439ba.JPG)
 ```
+![10](https://cloud.githubusercontent.com/assets/22424468/22617915/1d6088fe-eafa-11e6-9a7f-a5c97aa439ba.JPG)
+
 # Project Goals
 
 The code is written for educational purposes. Training course for web-developers - [DEVMAN.org](https://devman.org)

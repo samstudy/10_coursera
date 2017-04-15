@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 import xlsxwriter
 
 
-COUNT_OF_COURSE = 20
 
 
 def get_args():
@@ -16,55 +15,67 @@ def get_args():
     return arg.save_file_as
 
 
-def get_course_list():
-    urls_store = []
+def get_course_url():
+    COUNT_OF_COURSE = 20
     inf_from_url = requests.get('https://www.coursera.org/sitemap~www~courses.xml')
     content_of_site = BeautifulSoup(inf_from_url.content, 'lxml')
     list_of_course = content_of_site.find_all('loc')[:COUNT_OF_COURSE]
-    for course in list_of_course:
+    return list_of_course
+  
+        
+def get_course_information():
+    urls_store = []
+    course_name = []
+    course_date = []
+    course_lng = []
+    course_rating = []
+    course_duration = []
+    course_urls = get_course_url()
+    for course in course_urls:
         course_url = requests.get(course.text)
         page_inf = BeautifulSoup(course_url.content, 'lxml')
-        urls_store.extend([page_inf])
-    return urls_store       
+        course_name.append(get_course_name(page_inf))
+        course_date.append(get_course_date(page_inf))
+        course_lng.append(get_course_lng(page_inf))
+        course_rating.append(get_course_rating(page_inf))
+        course_duration.append(get_course_duration(page_inf))
+        store={'name':course_name,
+                'date':course_date,
+                'lng':course_lng,
+                'course_rating':course_rating,
+                'course_duration':course_duration}
+    return store
 
 
-def get_course_name_lang_date():
-    lang_store = []
-    name_store = []
-    date_store = []
-    course_name_lng_date = get_course_list()
-    for course in course_name_lng_date:
-        nm = course.find_all('div',{'class':'title display-3-text'})
-        dt = course.find_all('div',{'class':'startdate rc-StartDateString caption-text'})
-        lng = course.find_all('div',{'class':'language-info'})
-        name_store.extend([nm[0].text])
-        date_store.extend([dt[0].text])
-        lang_store.extend([lng[0].text])
-    return name_store, date_store, lang_store,
+def get_course_name(course):
+    nm = course.find('h1',{'class':'title display-3-text'}).text
+    return nm
 
 
-def get_course_rating():
-    rating_store = []
-    course_rtg = get_course_list()
-    for course in course_rtg:
-        if course.find_all('div',{'class':'ratings-text bt3-visible-xs'}):
-            rating = course.find_all('div',{'class':'ratings-text bt3-visible-xs'})
-            rating_store.extend([rating[0].text])
-        else:
-            rating_store.extend(['This course does not have a rating'])
-    return rating_store
+def get_course_date(course):
+    dt = course.find_all('div',{'class':'startdate rc-StartDateString caption-text'})
+    return dt[0].text
 
 
-def get_course_duration():
-    duration_store = []
-    course_dtn = get_course_list()
-    for course in course_dtn:
-        if course.find('i',{'cif-clock'}):
-            implement = course.find('i',{'cif-clock'}).findNext('td')
-            duration_store.extend([implement.text])
-        else :
-            duration_store.extend(["There is no information about duration"])
-    return duration_store
+def get_course_lng(course):
+    lng = course.find_all('div',{'class':'language-info'})
+    return lng[0].text
+
+
+def get_course_rating(course):
+    if course.find_all('div',{'class':'ratings-text bt3-visible-xs'}):
+        rating = course.find_all('div',{'class':'ratings-text bt3-visible-xs'})
+        return rating[0].text
+    else:
+        return 'This course does not have a rating'
+
+
+def get_course_duration(course):
+    if course.find('i',{'cif-clock'}):
+        implement = course.find('i',{'cif-clock'}).findNext('td')
+        return implement.text
+    else :
+        return 'There is no information about duration'
 
 
 def save_cource_inf_as_excell(file_name, course_name, course_date, course_lang, course_rating, course_duration):
@@ -86,7 +97,9 @@ def save_cource_inf_as_excell(file_name, course_name, course_date, course_lang, 
 
 if __name__ == '__main__':
     file_name = get_args()
-    course_name,course_date,course_lang = get_course_name_lang_date()
-    course_rating = get_course_rating()
-    course_duration = get_course_duration()
-    save_cource_inf_as_excell(file_name, course_name, course_date, course_lang, course_rating, course_duration)
+    coureses = get_course_information()
+    save_cource_inf_as_excell(file_name,coureses['name'], coureses['date'], coureses['lng'], coureses['course_rating'], coureses['course_duration'])
+
+      
+
+    

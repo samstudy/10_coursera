@@ -16,10 +16,10 @@ def get_args():
 
 
 def get_course_url():
-    COUNT_OF_COURSE = 20
+    _course_count = 20
     inf_from_url = requests.get('https://www.coursera.org/sitemap~www~courses.xml')
     content_of_site = BeautifulSoup(inf_from_url.content, 'lxml')
-    list_of_course = content_of_site.find_all('loc')[:COUNT_OF_COURSE]
+    list_of_course = content_of_site.find_all('loc')[:_course_count]
     return list_of_course
   
         

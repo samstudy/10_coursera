@@ -28,7 +28,7 @@ def collect_course_information():
         course_url = requests.get(course.text)
         page_inf = BeautifulSoup(course_url.content, 'lxml')
         course_store = {
-        'name':get_course_name(page_inf),
+        'course_name':get_course_name(page_inf),
         'start_date': get_course_start_date(page_inf),
         'language': get_course_language(page_inf),
         'course_rating': get_course_rating(page_inf),
@@ -39,8 +39,8 @@ def collect_course_information():
 
 
 def get_course_name(course):
-    name = course.find('h1',{'class':'title display-3-text'}).text
-    return name
+    course_name = course.find('h1',{'class':'title display-3-text'}).text
+    return course_name
 
 
 def get_course_start_date(course):
@@ -88,9 +88,9 @@ def save_cource_inf_as_excell(file_name, course_name, start_date, course_lang, c
 
 if __name__ == '__main__':
     file_name = get_args()
-    coureses = collect_course_information()
-    save_cource_inf_as_excell(file_name, (name['name'] for name in coureses),
-    (start_date['start_date'] for start_date in coureses),
-    (language['language'] for language in coureses),
-    (course_rating['course_rating'] for course_rating in coureses),
-    (course_duration['course_duration'] for course_duration in coureses))
+    courses = collect_course_information()
+    save_cource_inf_as_excell(file_name, (course_name['course_name'] for course_name in courses),
+    (start_date['start_date'] for start_date in courses),
+    (language['language'] for language in courses),
+    (course_rating['course_rating'] for course_rating in courses),
+    (course_duration['course_duration'] for course_duration in courses))

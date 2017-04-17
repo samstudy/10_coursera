@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 import xlsxwriter
 
 
+
 def get_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('save_file_as', help='A file name where will be putted all information ')
@@ -28,11 +29,11 @@ def collect_course_information():
         course_url = requests.get(course.text)
         page_inf = BeautifulSoup(course_url.content, 'lxml')
         course_store = {
-        'course_name':get_course_name(page_inf),
-        'start_date': get_course_start_date(page_inf),
-        'language': get_course_language(page_inf),
-        'course_rating': get_course_rating(page_inf),
-        'course_duration': get_course_duration(page_inf)
+            'course_name':get_course_name(page_inf),
+            'start_date': get_course_start_date(page_inf),
+            'language': get_course_language(page_inf),
+            'course_rating': get_course_rating(page_inf),
+            'course_duration': get_course_duration(page_inf)
         }
         course_information.append(course_store)
     return course_information
@@ -55,21 +56,21 @@ def get_course_language(course):
 
 def get_course_rating(course):
     rating = course.find('div',{'class':'ratings-text bt3-visible-xs'})
-    if rating is None:
-        return'This course does not have a rating'
-    else:
+    if rating:
         return rating.text
+    else:
+        return None
 
 
 def get_course_duration(course):
     duration = course.find('i',{'cif-clock'})
-    if duration is None:
-        return 'There is no information about duration'
-    else :
+    if duration :
         return duration.findNext('td').text
+    else :
+        return None
 
 
-def save_cource_inf_as_excell(file_name, course_name, start_date, course_lang, course_rating, course_duration):
+def save_cource_inf_as_excell(file_name, courses):
     workbook = xlsxwriter.Workbook(file_name)
     cell_format = workbook.add_format({'bold': True, 'italic': True, 'fg_color': '#FFFF00' })
     worksheet = workbook.add_worksheet()
@@ -78,19 +79,15 @@ def save_cource_inf_as_excell(file_name, course_name, start_date, course_lang, c
     worksheet.write('C1', 'Course language', cell_format)
     worksheet.write('D1', 'Course rating', cell_format)
     worksheet.write('E1', 'Course duration', cell_format)
-    worksheet.write_column('A2', course_name)
-    worksheet.write_column('B2', start_date)
-    worksheet.write_column('C2', course_lang)
-    worksheet.write_column('D2', course_rating)
-    worksheet.write_column('E2', course_duration)
+    worksheet.write_column('A2', (course_name['course_name'] for course_name in courses))
+    worksheet.write_column('B2', (start_date['start_date'] for start_date in courses))
+    worksheet.write_column('C2', (language['language'] for language in courses))
+    worksheet.write_column('D2', (course_rating['course_rating'] for course_rating in courses))
+    worksheet.write_column('E2', (course_duration['course_duration'] for course_duration in courses))
     workbook.close()
 
 
 if __name__ == '__main__':
     file_name = get_args()
     courses = collect_course_information()
-    save_cource_inf_as_excell(file_name, (course_name['course_name'] for course_name in courses),
-    (start_date['start_date'] for start_date in courses),
-    (language['language'] for language in courses),
-    (course_rating['course_rating'] for course_rating in courses),
-    (course_duration['course_duration'] for course_duration in courses))
+    save_cource_inf_as_excell(file_name, courses)
